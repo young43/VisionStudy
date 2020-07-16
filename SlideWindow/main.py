@@ -9,23 +9,26 @@ from slidewindow import SlideWindow
 from warper import Warper
 
 
-
-
 def process_image(frame):
     # grayscle
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # blur
     kernel_size = 5
     blur_gray = cv2.GaussianBlur(gray, (kernel_size, kernel_size), 0)
+
     # canny edge
     # low 이하는 버림 / high 이상은 취함
     # 중간에 있는 값은 high와 연결되었을 때 취함
     low_threshold = 60  # 60
     high_threshold = 70  # 70
-    edges_img = cv2.Canny(np.uint8(blur_gray), low_threshold, high_threshold)
+    #edges_img = cv2.Canny(np.uint8(blur_gray), low_threshold, high_threshold)
+
+    # threshold 임계값으로 low값은 버리고, high값은 취함
+    ret, thres_img = cv2.threshold(blur_gray, 70, 255, cv2.THRESH_BINARY)
+    #cv2.imshow("thresImage", thres_img)
 
     # warper
-    img = warper.warp(edges_img)
+    img = warper.warp(thres_img)
 
     # slide window
     img1, x_location = slidewindow.slidewindow(img)
@@ -60,10 +63,9 @@ def main():
         # warper, slidewindow 실행
         slideImage, x_location = process_image(img)
 
-        cv2.imshow("originImage", img)
+        #cv2.imshow("originImage", img)
         # cv2.imshow("warper", warper.warp(img))
         cv2.imshow("slidewindow", slideImage)
-
 
 
         #cv2.imshow("processImg", img1)

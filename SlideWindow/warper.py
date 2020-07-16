@@ -6,15 +6,18 @@ class Warper:
     def __init__(self, image=None):
         height = image.shape[0]
         width = image.shape[1]
+
+        h = image.shape[0]
+        w = image.shape[1]
         print("h : ", height)
         print("w : ", width)
 
         # distort scr to dst
         # src = np.float32([
-        #     [w * 1.6, h * 1.3],
-        #     [w * (-0.1), h * 1.3],
-        #     [0, h * 0.62],
-        #     [w, h * 0.62],
+        #     [w * 1.6, h * 1.3],     # 우하
+        #     [w * (-0.1), h * 1.3],  # 좌하
+        #     [0, h * 0.62],          # 좌상
+        #     [w, h * 0.62],          # 우상
         # ])
         # dst = np.float32([
         #     [w * 0.65, h * 0.98],
@@ -24,16 +27,16 @@ class Warper:
         # ])
 
         src = np.float32([
-            [220, 330],
-            [75, 385],
-            [450, 330],
-            [580, 385],
+            [w * 1.8, h * 1.3],     # 우하
+            [w * (-0.1), h * 1.3],  # 좌하
+            [0, h * 0.62],          # 좌상
+            [w, h * 0.62],          # 우상
         ])
         dst = np.float32([
-            [100, 0],
-            [100, height],
-            [width-100, 0],
-            [width-100, height],
+            [w * 0.78, h * 1.3],
+            [w * 0.32 , h * 1.3],
+            [w * (-0.3), 0],
+            [w * 1.3, 0],
         ])
 
         self.M = cv2.getPerspectiveTransform(src, dst)
