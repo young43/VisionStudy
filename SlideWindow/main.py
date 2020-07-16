@@ -12,26 +12,31 @@ from warper import Warper
 def process_image(frame):
     # grayscle
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
     # blur
-    kernel_size = 5
-    blur_gray = cv2.GaussianBlur(gray, (kernel_size, kernel_size), 0)
+    # kernel_size = 5
+    # blur_gray = cv2.GaussianBlur(gray, (kernel_size, kernel_size), 0)
+
+    # sharpening(외각을 더 또렷하게 해주는 효과)
+    # -1이면 이미지크기와 동일
+    kernel_sharpen = np.array([[-1,-1,-1,-1,-1],[-1,2,2,2,-1],[-1,2,8,2,-1],[-1,2,2,2,-1],[-1,-1,-1,-1,-1]])/8.0
+    sharp_img = cv2.filter2D(gray, -1, kernel_sharpen)
 
     # canny edge
     # low 이하는 버림 / high 이상은 취함
     # 중간에 있는 값은 high와 연결되었을 때 취함
-    low_threshold = 60  # 60
-    high_threshold = 70  # 70
-    #edges_img = cv2.Canny(np.uint8(blur_gray), low_threshold, high_threshold)
-
-    # threshold 임계값으로 low값은 버리고, high값은 취함
-    ret, thres_img = cv2.threshold(blur_gray, 70, 255, cv2.THRESH_BINARY)
-    #cv2.imshow("thresImage", thres_img)
+    # low_threshold = 60
+    # high_threshold = 70
+    # edges_img = cv2.Canny(np.uint8(blur_gray), low_threshold, high_threshold)
 
     # warper
-    img = warper.warp(thres_img)
+    warp_img = warper.warp(sharp_img)
+
+    # threshold 임계값으로 low값은 버리고, high값은 취함
+    ret, thres_img = cv2.threshold(warp_img, 100, 255, cv2.THRESH_BINARY)
 
     # slide window
-    img1, x_location = slidewindow.slidewindow(img)
+    img1, x_location = slidewindow.slidewindow(thres_img)
 
     return img1, x_location
 
@@ -63,15 +68,13 @@ def main():
         # warper, slidewindow 실행
         slideImage, x_location = process_image(img)
 
-        #cv2.imshow("originImage", img)
+        # cv2.imshow("originImage", img)
         # cv2.imshow("warper", warper.warp(img))
         cv2.imshow("slidewindow", slideImage)
 
-
         #cv2.imshow("processImg", img1)
 
-    # img = cv2.imread("image.jpg", cv2.IMREAD_COLOR)
-    # img1, x_location = process_image(img)
+
 
 if __name__ == '__main__':
     main()

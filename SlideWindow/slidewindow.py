@@ -16,8 +16,11 @@ class SlideWindow:
 
         x_location = None
         # init out_img, height, width
-        # 3채널로 변경해줌
-        out_img = np.dstack((img, img, img)) * 255
+
+        # 255를 곱해주지 않음
+        out_img = np.dstack((img, img, img))
+        # out_img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
         height = img.shape[0]
         width = img.shape[1]
 
