@@ -18,8 +18,12 @@ def process_image(frame):
     # blur_gray = cv2.GaussianBlur(gray, (kernel_size, kernel_size), 0)
 
     # sharpening(외각을 더 또렷하게 해주는 효과)
+    kernel_sharpen = np.array([[-1,-1,-1,-1,-1],
+                               [-1,2,2,2,-1],
+                               [-1,2,8,2,-1],
+                               [-1,2,2,2,-1],
+                               [-1,-1,-1,-1,-1]]) / 8.0
     # -1이면 이미지크기와 동일
-    kernel_sharpen = np.array([[-1,-1,-1,-1,-1],[-1,2,2,2,-1],[-1,2,8,2,-1],[-1,2,2,2,-1],[-1,-1,-1,-1,-1]])/8.0
     sharp_img = cv2.filter2D(gray, -1, kernel_sharpen)
 
     # canny edge
@@ -68,7 +72,7 @@ def main():
         # warper, slidewindow 실행
         slideImage, x_location = process_image(img)
 
-        # cv2.imshow("originImage", img)
+        cv2.imshow("originImage", img)
         # cv2.imshow("warper", warper.warp(img))
         cv2.imshow("slidewindow", slideImage)
 
